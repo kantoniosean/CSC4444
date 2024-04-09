@@ -1,30 +1,52 @@
 <script>
-	export let name;
+	import ImageUpload from './ImageUpload.svelte';
+	import ResultDisplay from './ResultDisplay.svelte';
+	import * as tf from '@tensorflow/tfjs';
+  
+	let model;
+	let result = '';
+  
+	async function loadModel() {
+	  model = await tf.loadLayersModel('/tf_model/model.json');
+	}
+  
+	function handleImageSelected(event) {
+	  const file = event.detail.file;
+	  const reader = new FileReader();
+	  reader.onload = async () => {
+		const img = new Image();
+		img.src = reader.result;
+		img.onload = async () => {
+		  const tensor = tf.browser.fromPixels(img)
+			.resizeNearestNeighbor([240, 240])
+			.toFloat()
+			.expandDims();
+		  const prediction = await model.predict(tensor);
+		  result = prediction.toString(); // Simplified, you may want to process the prediction result
+		};
+	  };
+	  reader.readAsDataURL(file);
+	}
+  
+	loadModel();
 </script>
 
-<main>
-	<h1>Hello!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
 <style>
-	main {
+	.app-container {
+		padding: 40px;
+	}
+
+	.title {
+		font-size: 24px;
 		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+		color: #333;
+		margin-bottom: 20px;
+		font-weight: bold;
 	}
 </style>
+
+<div class="app-container">
+	<div class="title">Traffic Image Classifier</div>
+	<ImageUpload on:imageSelected={handleImageSelected} />
+	<ResultDisplay {result} />
+</div>
