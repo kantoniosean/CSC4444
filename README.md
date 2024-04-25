@@ -2,7 +2,7 @@
 
 ## This is how to run our scripts:
 
-### Commans:
+### Commands:
 #### git clone https://github.com/kantoniosean/CSC4444.git
 #### cd CSC4444
 #### npm install
