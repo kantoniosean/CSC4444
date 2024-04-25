@@ -4,7 +4,8 @@
 
 ### Commands:
 #### git clone https://github.com/kantoniosean/CSC4444.git
-#### cd CSC4444
+#### cd svelte-traffic-ai
 #### npm install
+####  npm install rollup-plugin-svelte --save-dev
 #### npm run build
 #### npm run dev
